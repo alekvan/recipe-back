@@ -24,9 +24,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', (req, res) =>
-  res.send('<html><body><h1>GELLELELERLRLEL</h1></body></html>')
-);
+app.use('/', () => (
+  <html>
+    <body>
+      <h1>ASDASDASD</h1>
+    </body>
+  </html>
+));
 app.use('/test', (req, res) => res.send('TEST'));
 app.use('/users', usersRouter);
 app.use('/recipes', recipesRouter);
