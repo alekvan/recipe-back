@@ -10,7 +10,7 @@ const getAll = async (req, res) => {
   try {
     const allRecipes = await Recipes.find({});
 
-    response(res, 200, 'All recipes from DB', { allRecipes });
+    res.status(200).json({ recipes: allRecipes });
   } catch (err) {
     console.log(err);
   }

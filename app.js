@@ -20,12 +20,10 @@ app.use(cors());
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', usersRouter);
-app.use('/', recipesRouter);
+app.use('/recipes', recipesRouter);
 app.use('/images', express.static('images'));
 app.use('/profile-images', express.static('profile_pictures'));
 
