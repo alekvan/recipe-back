@@ -9,10 +9,6 @@ const recipesRouter = require('./routes/recipes');
 require('dotenv').config();
 
 const app = express();
-app.use(express.json());
-
-const port = process.env.PORT || 5005;
-app.listen(port, () => console.log(`Listening on port ${port}`));
 
 mongoose.set('strictQuery', false);
 mongoose.connect(
@@ -24,6 +20,7 @@ connection.on('error', console.error.bind(console, 'connection error:'));
 app.use(cors());
 
 app.use(logger('dev'));
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -44,3 +41,6 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+const port = process.env.PORT || 5005;
+app.listen(port, () => console.log(`Listening on port ${port}`));
