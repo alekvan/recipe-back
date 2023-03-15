@@ -24,16 +24,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', () => (
-  <html>
-    <body>
-      <h1>ASDASDASD</h1>
-    </body>
-  </html>
-));
-app.use('/test', (req, res) => res.send('TEST'));
 app.use('/users', usersRouter);
-app.use('/recipes', recipesRouter);
+app.use('/', recipesRouter);
 app.use('/images', express.static('images'));
 app.use('/profile-images', express.static('profile_pictures'));
 
