@@ -4,11 +4,15 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
 const usersRouter = require('./routes/users');
 const recipesRouter = require('./routes/recipes');
+require('dotenv').config();
 
 const app = express();
+
+const port = process.env.PORT || 5005;
+app.listen(port, () => console.log(`Listening on port ${port}`));
+
 mongoose.set('strictQuery', false);
 mongoose.connect(
   `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@testcluster.k8qjdgd.mongodb.net/?retryWrites=true&w=majority`
@@ -40,5 +44,3 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
-module.exports = app;
