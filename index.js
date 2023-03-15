@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
@@ -10,7 +9,7 @@ require('dotenv').config();
 
 const app = express();
 
-// mongoose.set('strictQuery', false);
+mongoose.set('strictQuery', false);
 mongoose.connect(
   `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@testcluster.k8qjdgd.mongodb.net/?retryWrites=true&w=majority`,
   () => console.log('Connected to DB')
