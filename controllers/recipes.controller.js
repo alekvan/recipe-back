@@ -3,6 +3,9 @@ const Recipes = require('../models/recipe.model');
 const Users = require('../models/user.model');
 const response = require('../util/responseHandler');
 const { unlink } = require('fs');
+const { PutObjectCommand } = require('@aws-sdk/client-s3');
+const { s3 } = require('../util/s3');
+const { config } = require('../config');
 
 require('dotenv').config();
 
@@ -22,11 +25,8 @@ const getBreakfastRecipes = async (req, res) => {
     console.log(req.query);
 
     const pageSize = 9;
-    // number of current page from query string
     const pageNumber = Number(req.query.pageNumber) || 1;
-    // number of first products to skip from the products list
     const skip = pageSize * (pageNumber - 1);
-    // server response
 
     response(res, 200, 'Breakfast recipes', {
       recipes: recipes.slice(skip, skip + pageSize),
@@ -43,11 +43,8 @@ const getBrunchRecipes = async (req, res) => {
     const recipes = await Recipes.find({ category: 'brunch' });
 
     const pageSize = 9;
-    // number of current page from query string
     const pageNumber = Number(req.query.pageNumber) || 1;
-    // number of first products to skip from the products list
     const skip = pageSize * (pageNumber - 1);
-    // server response
 
     response(res, 200, 'Breakfast recipes', {
       recipes: recipes.slice(skip, skip + pageSize),
@@ -64,11 +61,8 @@ const getLunchRecipes = async (req, res) => {
     const recipes = await Recipes.find({ category: 'lunch' });
 
     const pageSize = 9;
-    // number of current page from query string
     const pageNumber = Number(req.query.pageNumber) || 1;
-    // number of first products to skip from the products list
     const skip = pageSize * (pageNumber - 1);
-    // server response
 
     response(res, 200, 'Breakfast recipes', {
       recipes: recipes.slice(skip, skip + pageSize),
@@ -85,11 +79,8 @@ const getDinnerRecipes = async (req, res) => {
     const recipes = await Recipes.find({ category: 'dinner' });
 
     const pageSize = 9;
-    // number of current page from query string
     const pageNumber = Number(req.query.pageNumber) || 1;
-    // number of first products to skip from the products list
     const skip = pageSize * (pageNumber - 1);
-    // server response
 
     response(res, 200, 'Breakfast recipes', {
       recipes: recipes.slice(skip, skip + pageSize),
@@ -112,11 +103,8 @@ const newRecipes = async (req, res) => {
     const firstThree = filteredRecipes.reverse();
 
     const pageSize = 3;
-    // number of current page from query string
     const pageNumber = Number(req.query.pageNumberNew) || 1;
-    // number of first products to skip from the products list
     const skip = pageSize * (pageNumber - 1);
-    // server response
 
     response(res, 200, 'Latest recipes', {
       recipes: firstThree.slice(skip, skip + pageSize),
@@ -138,11 +126,8 @@ const popularRecipes = async (req, res) => {
     const firstSix = filteredRecipes.reverse();
 
     const pageSize = 6;
-    // number of current page from query string
     const pageNumber = Number(req.query.pageNumberPopular) || 1;
-    // number of first products to skip from the products list
     const skip = pageSize * (pageNumber - 1);
-    // server response
 
     response(res, 200, 'Popular recipes', {
       recipes: firstSix.slice(skip, skip + pageSize),
@@ -190,10 +175,22 @@ const likes = async (req, res) => {
 };
 
 const create = async (req, res) => {
+  console.log(req.file);
   try {
     req.body.createdBy = req.params.id;
-    req.body.recipeImg = `${proccess.env.SERVER_URL}/images/${req.file.filename}`;
+    req.body.recipeImg = `https://${config.aws.s3.bucket_name}.s3.${config.aws.s3.region}.amazonaws.com/${req.file.originalname}`;
     req.body.likes = [];
+
+    const params = {
+      Bucket: config.aws.s3.bucket_name,
+      ContentType: req.file.mimetype,
+      Key: req.file.originalname,
+      Body: req.file.buffer,
+      ACL: 'public-read',
+    };
+
+    const command = new PutObjectCommand(params);
+    await s3.send(command);
     const newRecipe = await Recipes.create(req.body);
 
     await Users.findByIdAndUpdate(req.params.id, {
@@ -219,7 +216,7 @@ const edit = async (req, res) => {
         if (err) throw err;
         console.log('Old image was deleted');
       });
-      req.body.recipeImg = `${proccess.env.SERVER_URL}/images/${req.file.filename}`;
+      req.body.recipeImg = `${process.env.SERVER_URL}/images/${req.file.filename}`;
     } else {
       req.body.recipeImg = recipe.recipeImg;
     }

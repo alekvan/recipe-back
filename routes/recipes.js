@@ -3,7 +3,7 @@ const router = express.Router();
 const { expressjwt: jwt } = require('express-jwt');
 const controller = require('../controllers/recipes.controller');
 const response = require('../util/responseHandler');
-const upload = require('../util/multer');
+const { upload } = require('../util/s3');
 
 require('dotenv').config();
 

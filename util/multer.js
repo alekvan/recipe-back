@@ -11,6 +11,9 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const uniqueTime = new Date().toISOString().replace(/:/g, '-');
+    console.log('###################################');
+    console.log('TRIGGERED');
+    console.log('###################################');
     const fileName = `${uniqueTime}-${file.originalname}`;
 
     cb(null, fileName);

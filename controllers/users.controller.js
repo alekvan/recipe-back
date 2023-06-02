@@ -99,7 +99,7 @@ const update = async (req, res) => {
           console.log('Old image was deleted');
         }
       );
-      req.body.image = `${proccess.env.SERVER_URL}/images/${req.file.filename}`;
+      req.body.image = `${process.env.SERVER_URL}/images/${req.file.filename}`;
     } else {
       req.body.image = user.image;
     }

@@ -20,6 +20,7 @@ app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/', express.static(__dirname + '/public'));
 
 app.use('/users', usersRouter);
 app.use('/recipes', recipesRouter);
